@@ -1,8 +1,12 @@
 import ConfigParser, os, argparse
 
+def list_profiles():
+    print "list"
+
 def main():
     parser = argparse.ArgumentParser(description='change default profile in aws credentials file.')
-    parser.add_argument('profile', help='Profile name')
+    parser.add_argument('profile', help='Profile name', nargs='?', default='default')
+    parser.add_argument('-l', '--list', action='store_true')
     parser.add_argument('-c', '--credentials', dest='credentials', 
                         help='AWS credentials', required=False, default="~/.aws/credentials")
     args = parser.parse_args()
@@ -15,6 +19,10 @@ def main():
     bkp_section = 'aws-default-previously'
     default_section = 'default'
     config.read(os.path.expanduser(args.credentials))
+    if args.list:
+        print ' '.join(config.sections())
+    if args.profile == 'default':
+        return 0
     try:
         items = config.items(default_section)
         if not config.has_section(bkp_section):
